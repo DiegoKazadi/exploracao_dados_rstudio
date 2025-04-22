@@ -134,7 +134,6 @@ ggplot(evadidos_por_ano, aes(x = ano_evasao, y = qtd_evadidos)) +
   ) +
   theme_minimal()
 
-
 # Visualizar lunos ativos e Evadidos
 library(readr)
 library(dplyr)
