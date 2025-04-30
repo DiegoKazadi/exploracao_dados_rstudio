@@ -98,6 +98,61 @@ alunos %>%
        x = "Tipo de Admissão", y = "Quantidade") +
   theme_minimal()
 
+
+# =====================================================
+#  Verificar e tratar tipos de dados
+# =====================================================
+alunos <- alunos %>%
+  mutate(
+    data_nascimento = as.Date(data_nascimento, format = "%Y-%m-%d"),
+    ano_formatura_ensino_medio = as.integer(ano_formatura_ensino_medio)
+  )
+
+
+# =====================================================
+#  Tratar valores inconsistentes ou "sujos"
+# =====================================================
+alunos <- alunos %>%
+  mutate(
+    genero = case_when(
+      genero %in% c("f", "feminino") ~ "feminino",
+      genero %in% c("m", "masculino") ~ "masculino",
+      TRUE ~ "outro"
+    )
+  )
+
+# =====================================================
+#   Identificar e tratar outliers
+# =====================================================
+alunos <- alunos %>%
+  mutate(idade = as.integer(format(Sys.Date(), "%Y")) - as.integer(format(data_nascimento, "%Y"))) %>%
+  filter(idade >= 15 & idade <= 100)
+
+# =====================================================
+#   Preencher ou excluir valores ausentes
+# =====================================================
+# Exemplo: remover colunas com mais de 80% de NA
+limite_na <- 80
+colunas_validas <- faltantes %>% filter(percentual_na < limite_na) %>% pull(coluna)
+alunos <- alunos %>% select(all_of(colunas_validas))
+
+
+# =====================================================
+#   Preencher ou excluir valores ausentes
+# =====================================================
+alunos <- alunos %>%
+  mutate(
+    tempo_desde_ingresso = 2025 - ano_ingresso,
+    status_resumido = case_when(
+      alunos_ativos == 1 ~ "Ativo",
+      ex_alunos == 1 ~ "Concluído",
+      alunos_inativos == 1 ~ "Inativo",
+      TRUE ~ "Desconhecido"
+    )
+  )
+
+
+
 # =====================================================
 # Fim do pré-processamento
 # =====================================================
