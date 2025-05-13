@@ -9,11 +9,13 @@ unlink("/home/diego/R/x86_64-pc-linux-gnu-library/4.1", recursive = TRUE)
 # Criar novamente a pasta de bibliotecas
 dir.create("/home/diego/R/x86_64-pc-linux-gnu-library/4.1", recursive = TRUE)
 install.packages(c("janitor", "lubridate", "dplyr", "tidyr", "stringr", "ggplot2"))
+install.packages("janitor")
+library(janitor)
 
 
 # 2. Lendo a tabela e limpando os nomes das colunas
-alunos <- read_delim("/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos.csv", delim = ";") %>%
-  clean_names()
+alunos <- readr::read_delim("/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos.csv", delim = ";") %>%
+  janitor::clean_names()
 
 # 3. Removendo duplicatas
 alunos <- alunos %>% distinct()
