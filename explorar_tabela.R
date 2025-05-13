@@ -1,3 +1,7 @@
+# =====================================================
+# EXPLORAÇÃO DA TABELA 'alunos.csv'
+# =====================================================
+
 # Carregando pacotes
 library(readr)
 library(dplyr)
@@ -185,3 +189,33 @@ ggplot(dados_comparativos, aes(x = ano, y = qtd, color = tipo)) +
   theme_minimal() +
   scale_color_manual(values = c("Ativos" = "steelblue", "Evadidos" = "firebrick"))
 
+# === As Razões de Inatividade ===
+# Verificando as razões de inatividade
+ggplot(alunos, aes(x = razao_inatividade)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Razões de Inatividade dos Alunos", x = "Razão de Inatividade", y = "Número de Alunos") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Gráfico com cores divididas por razões de inatividade
+ggplot(alunos, aes(x = razao_inatividade, fill = razao_inatividade)) +
+  geom_bar() +
+  labs(title = "Razões de Inatividade dos Alunos", 
+       x = "Razão de Inatividade", 
+       y = "Número de Alunos", 
+       fill = "Razão de Inatividade") +  # Adicionando legenda
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Girando as labels do eixo X
+
+# Verificando os nomes das colunas
+names(alunos)
+
+# Gráfico com estado do aluno no eixo X e legenda para as categorias de estado
+ggplot(alunos, aes(x = ano_ingresso, fill = estado)) +
+  geom_bar(position = "dodge") +  # Usando 'position = "dodge"' para barras lado a lado
+  labs(title = "Estado dos Alunos por Ano de Ingresso", 
+       x = "Ano de Ingresso", 
+       y = "Número de Alunos", 
+       fill = "Estado do Aluno") +  # Adicionando legenda
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Girando as labels do eixo X

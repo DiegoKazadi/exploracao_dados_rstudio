@@ -1,3 +1,7 @@
+# =====================================================
+# CARREGAMENTO DA TABELA 'alunos.csv'
+# =====================================================
+
 # Carregando pacotes
 library(readr)
 library(dplyr)
