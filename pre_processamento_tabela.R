@@ -3,18 +3,31 @@
 # =====================================================
 
 # 1. Carregando pacotes
-# Apagar o diretório de pacotes manualmente (riscos mínimos, mas cuidado se tiver muitos pacotes instalados)
-unlink("/home/diego/R/x86_64-pc-linux-gnu-library/4.1", recursive = TRUE)
-
 # Criar novamente a pasta de bibliotecas
 dir.create("/home/diego/R/x86_64-pc-linux-gnu-library/4.1", recursive = TRUE)
 install.packages(c("janitor", "lubridate", "dplyr", "tidyr", "stringr", "ggplot2"))
 install.packages("janitor")
+install.packages("readr")
+
+# Apagar o diretório de pacotes manualmente (riscos mínimos, mas cuidado se tiver muitos pacotes instalados)
+unlink("/home/diego/R/x86_64-pc-linux-gnu-library/4.1", recursive = TRUE)
+pacotes <- c("janitor", "lubridate", "dplyr", "tidyr", "stringr", "ggplot2", "readr")
+lapply(pacotes, library, character.only = TRUE)
+
 library(janitor)
+library(readr)
+library(dplyr)
+library(janitor)
+library(tidyr)
+library(ggplot2)
+library(stringr)
 
 
 # 2. Lendo a tabela e limpando os nomes das colunas
-alunos <- readr::read_delim("/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos.csv", delim = ";") %>%
+alunos <- readr::read_delim(
+  "/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos.csv",
+  delim = ";"
+) %>%
   janitor::clean_names()
 
 # 3. Removendo duplicatas
@@ -43,11 +56,11 @@ alunos <- alunos %>%
     )
   )
 
-# 7. Conversões de tipos
+# 7. Conversões de tipos + criação de data_nascimento estimada
 alunos <- alunos %>%
   mutate(
-    data_nascimento = as.Date(data_nascimento, format = "%Y-%m-%d"),
-    ano_formatura_ensino_medio = as.integer(ano_formatura_ensino_medio)
+    ano_formatura_ensino_medio = as.integer(ano_formatura_ensino_medio),
+    data_nascimento_estimada = as.Date(paste0(2024 - idade, "-06-30"))
   )
 
 # 8. Verificando percentual de dados ausentes
@@ -74,7 +87,10 @@ alunos <- alunos %>%
   )
 
 # 11. Salvando a tabela pré-processada
-write_csv(alunos, "/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos_preprocessado.csv")
+readr::write_csv(
+  alunos,
+  "/home/diego/Documentos/Semestre 2024.2/Dados/Tabelas_0/alunos_preprocessado.csv"
+)
 
-# 12. Fim
-message("Pré-processamento finalizado e arquivo salvo com sucesso!")
+# 12. Mensagem de sucesso
+message("✅ Pré-processamento finalizado e arquivo salvo com sucesso!")
