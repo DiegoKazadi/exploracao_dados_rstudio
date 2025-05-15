@@ -94,3 +94,45 @@ avaliar_modelo(y_teste[as.numeric(rownames(x_teste_knn))], knn_pred, "KNN")
 
 # 13. Fim
 message("✅ Modelagem finalizada!")
+
+# ================================
+
+# Instalar e carregar o mlflow
+installed.packages()[, "Package"] |> grep("mlflow", ., value = TRUE)
+install.packages("remotes")  # se ainda não tiver
+install.packages("reticulate")
+remotes::install_github("mlflow/mlflow", subdir = "mlflow/R/mlflow")
+remotes::install_github("mlflow/mlflow", subdir = "mlflow/R/mlflow", lib = "~/R/x86_64-pc-linux-gnu-library/4.3")
+library(mlflow, lib.loc = "~/R/x86_64-pc-linux-gnu-library/4.3")
+library(reticulate)
+py_config()
+
+
+# Iniciar experimento
+mlflow_set_experiment("modelo_evasao_ufcg")
+mlflow_start_run(run_name = "experimento_completo")
+
+# Logar parâmetros, métricas e modelo
+avaliar_modelo <- function(real, previsto, nome_modelo) {
+  cm <- confusionMatrix(as.factor(previsto), as.factor(real), positive = "1")
+  auc_val <- roc(real, as.numeric(previsto))$auc
+  
+  cat(paste0("\n### ", nome_modelo, " ###\n"))
+  print(cm)
+  cat(paste("AUC:", round(auc_val, 3), "\n"))
+  
+  # Log no MLflow
+  mlflow_log_param("modelo", nome_modelo)
+  mlflow_log_metric("AUC", round(auc_val, 3))
+  mlflow_log_metric("Accuracy", cm$overall["Accuracy"])
+  mlflow_log_metric("Sensitivity", cm$byClass["Sensitivity"])
+  mlflow_log_metric("Specificity", cm$byClass["Specificity"])
+}
+
+
+# Finalizar o run
+mlflow_end_run()
+
+# Rodar o MLflow UI (no terminal, fora do R)
+
+
